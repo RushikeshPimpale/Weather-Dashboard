@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .floating-shapes {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-shapes:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+            width: 80px;
+            height: 80px;
+        }
+
+        .floating-shapes:nth-child(2) {
+            top: 60%;
+            left: 80%;
+            animation-delay: 2s;
+            width: 120px;
+            height: 120px;
+        }
+
+        .floating-shapes:nth-child(3) {
+            top: 80%;
+            left: 20%;
+            animation-delay: 4s;
+            width: 60px;
+            height: 60px;
+        }
+
+        .floating-shapes:nth-child(4) {
+            top: 30%;
+            left: 70%;
+            animation-delay: 1s;
+            width: 90px;
+            height: 90px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Header Animation */
+        .header {
+            text-align: center;
+            padding: 2rem 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin: 2rem;
+            animation: slideInDown 1s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 2px 2px 4px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.5); }
+            to { text-shadow: 2px 2px 4px rgba(0,0,0,0.3), 0 0 30px rgba(255,255,255,0.8); }
+        }
+
+        @keyframes slideInDown {
+            from { transform: translateY(-100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Search Section */
+        .search-section {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideInLeft 1s ease-out 0.3s both;
+            transition: transform 0.3s ease;
+        }
+
+        .search-section:hover {
+            transform: translateY(-5px);
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .search-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: none;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .search-input:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            font-size: 1.2rem;
+        }
+
+        .search-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .search-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .search-btn:hover::before {
+            left: 100%;
+        }
+
+        .clear-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .clear-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Current Weather */
+        .current-weather {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideInRight 1s ease-out 0.5s both;
+            transition: transform 0.3s ease;
+        }
+
+        .current-weather:hover {
+            transform: translateY(-5px);
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .city-name {
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .weather-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .weather-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .weather-item:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .weather-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: rotate 4s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        .weather-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        .weather-value {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .uv-index {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b) !important;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        /* Forecast Section */
+        .forecast-section {
+            margin-top: 2rem;
+            animation: fadeInUp 1s ease-out 0.7s both;
+        }
+
+        @keyframes fadeInUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .forecast-title {
+            color: white;
+            font-size: 2rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .forecast-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .forecast-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .forecast-card:hover {
+            transform: translateY(-10px) rotateY(5deg);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .forecast-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .forecast-card:hover::after {
+            transform: translateX(100%);
+        }
+
+        .forecast-date {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .forecast-temp, .forecast-humidity {
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0.5rem 0;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 3rem;
+            animation: fadeIn 2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .footer a {
+            color: #ffa500;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: #ff6b6b;
+        }
+
+        .heart {
+            color: #ff416c;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.3); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.3); }
+            70% { transform: scale(1); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .weather-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .forecast-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="floating-shapes"></div>
+        <div class="floating-shapes"></div>
+        <div class="floating-shapes"></div>
+        <div class="floating-shapes"></div>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <h1><i class="fas fa-cloud-sun"></i> Weather Dashboard</h1>
+    </div>
+
+    <div class="main-container">
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Search Section -->
+            <div class="search-section">
+                <h4 class="search-title">🔍 Search for a City</h4>
+                <div class="search-container">
+                    <i class="fas fa-map-marker-alt search-icon"></i>
+                    <input type="text" class="search-input" id="search-city" placeholder="Enter city name..." aria-label="City Search">
+                </div>
+                <button class="search-btn" id="search-button">
+                    <i class="fas fa-search"></i> Search Weather
+                </button>
+                <button class="clear-btn" id="clear-history">
+                    <i class="fas fa-trash"></i> Clear History
+                </button>
+                <ul class="list-group" id="city-history"></ul>
+            </div>
+
+            <!-- Current Weather -->
+            <div class="current-weather" id="current-weather">
+                <h3 class="city-name" id="current-city">Select a city to view weather</h3>
+                <div class="weather-info">
+                    <div class="weather-item">
+                        <div class="weather-label">🌡️ Temperature</div>
+                        <div class="weather-value" id="temperature">--°</div>
+                    </div>
+                    <div class="weather-item">
+                        <div class="weather-label">💧 Humidity</div>
+                        <div class="weather-value" id="humidity">--%</div>
+                    </div>
+                    <div class="weather-item">
+                        <div class="weather-label">💨 Wind Speed</div>
+                        <div class="weather-value" id="wind-speed">-- mph</div>
+                    </div>
+                    <div class="weather-item">
+                        <div class="weather-label">☀️ UV Index</div>
+                        <div class="weather-value">
+                            <span class="uv-index" id="uv-index">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Forecast Section -->
+        <div class="forecast-section" id="future-weather">
+            <h3 class="forecast-title">📅 5-Day Forecast</h3>
+            <div class="forecast-grid">
+                <div class="forecast-card">
+                    <div class="forecast-date" id="fDate0">Day 1</div>
+                    <div id="fImg0">🌤️</div>
+                    <div class="forecast-temp">Temp: <span id="fTemp0">--°</span></div>
+                    <div class="forecast-humidity">Humidity: <span id="fHumidity0">--%</span></div>
+                </div>
+                <div class="forecast-card">
+                    <div class="forecast-date" id="fDate1">Day 2</div>
+                    <div id="fImg1">🌤️</div>
+                    <div class="forecast-temp">Temp: <span id="fTemp1">--°</span></div>
+                    <div class="forecast-humidity">Humidity: <span id="fHumidity1">--%</span></div>
+                </div>
+                <div class="forecast-card">
+                    <div class="forecast-date" id="fDate2">Day 3</div>
+                    <div id="fImg2">🌤️</div>
+                    <div class="forecast-temp">Temp: <span id="fTemp2">--°</span></div>
+                    <div class="forecast-humidity">Humidity: <span id="fHumidity2">--%</span></div>
+                </div>
+                <div class="forecast-card">
+                    <div class="forecast-date" id="fDate3">Day 4</div>
+                    <div id="fImg3">🌤️</div>
+                    <div class="forecast-temp">Temp: <span id="fTemp3">--°</span></div>
+                    <div class="forecast-humidity">Humidity: <span id="fHumidity3">--%</span></div>
+                </div>
+                <div class="forecast-card">
+                    <div class="forecast-date" id="fDate4">Day 5</div>
+                    <div id="fImg4">🌤️</div>
+                    <div class="forecast-temp">Temp: <span id="fTemp4">--°</span></div>
+                    <div class="forecast-humidity">Humidity: <span id="fHumidity4">--%</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        Weather Dashboard - Made with <i class="fas fa-heart heart"></i> by 
+        <a href="https://github.com/RushikeshPimpale" target="_blank">Rushikesh Pimpale</a>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Add some interactive animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add ripple effect to buttons
+            const buttons = document.querySelectorAll('.search-btn, .clear-btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.classList.add('ripple');
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Parallax effect for floating shapes
+            window.addEventListener('mousemove', function(e) {
+                const shapes = document.querySelectorAll('.floating-shapes');
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                shapes.forEach((shape, index) => {
+                    const speed = (index + 1) * 0.5;
+                    shape.style.transform = `translate(${x * speed * 20}px, ${y * speed * 20}px)`;
+                });
+            });
+
+            // Add loading state to search button
+            const searchBtn = document.getElementById('search-button');
+            const originalText = searchBtn.innerHTML;
+            
+            searchBtn.addEventListener('click', function() {
+                this.innerHTML = '<div class="loading"></div> Searching...';
+                this.disabled = true;
+                
+                // Simulate API call delay
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                }, 2000);
+            });
+        });
+
+        // CSS for ripple effect
+        const style = document.createElement('style');
+        style.textContent = `
+            .ripple {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.6);
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                pointer-events: none;
+            }
+            
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+    
+    <!-- Your original script.js file should be included here -->
+    <script src="script.js"></script>
+</body>
+</html>
